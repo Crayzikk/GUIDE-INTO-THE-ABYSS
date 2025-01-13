@@ -10,7 +10,6 @@ public class Player : MonoBehaviour
 
     [Header("Health Settings")]
     [SerializeField] private int healthPlayer;
-    private int currentHealthPlayer;
 
     // Reference to components
     private PlayerMovement playerMovement;
@@ -23,6 +22,7 @@ public class Player : MonoBehaviour
 
     // Player State
     private float currentSpeedPlayer;
+    private int currentHealthPlayer;
     
     void Start()
     {
