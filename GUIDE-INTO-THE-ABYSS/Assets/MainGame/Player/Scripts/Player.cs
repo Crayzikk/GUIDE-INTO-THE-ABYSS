@@ -23,6 +23,9 @@ public class Player : MonoBehaviour
     // Player State
     private float currentSpeedPlayer;
     private int currentHealthPlayer;
+
+    // Cheking
+    public static bool isRunning;
     
     void Start()
     {
@@ -50,10 +53,11 @@ public class Player : MonoBehaviour
 
     private void GettingInputs()
     {
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
 
         jumpInput = Input.GetKeyDown(KeyCode.Space);
         runInput = Input.GetKey(KeyCode.LeftShift);
+        isRunning = runInput;
     }
 }
