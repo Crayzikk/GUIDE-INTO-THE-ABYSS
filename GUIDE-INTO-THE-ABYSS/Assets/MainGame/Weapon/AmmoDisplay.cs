@@ -16,8 +16,14 @@ public class AmmoDisplay : MonoBehaviour
 
     void Update()
     {
-        Weapon weapon = weaponController.GetActiveWeapon();
-
-        ammoText.text = $"{weapon.currentAmmoInMagazine}/{weapon.totalAmmo}";
+        if(!DialogManager.dialogActive)
+        {
+            Weapon weapon = weaponController.GetActiveWeapon();
+            ammoText.text = $"{weapon.currentAmmoInMagazine}/{weapon.totalAmmo}";            
+        }
+        else
+        {
+            ammoText.text = string.Empty;
+        }
     }
 }

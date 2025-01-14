@@ -37,17 +37,21 @@ public class Player : MonoBehaviour
     
     void Update()
     {
-        GettingInputs();
+        if(!DialogManager.dialogActive)
+        {
+            GettingInputs();
 
-        float targetSpeed = runInput ? speedRunPlayer : speedWalkPlayer;
-        currentSpeedPlayer = Mathf.Lerp(currentSpeedPlayer, targetSpeed, stepLerp * Time.deltaTime);
+            float targetSpeed = runInput ? speedRunPlayer : speedWalkPlayer;
+            currentSpeedPlayer = Mathf.Lerp(currentSpeedPlayer, targetSpeed, stepLerp * Time.deltaTime);
 
-        playerMovement.RunPlayer(horizontalInput, verticalInput, currentSpeedPlayer);
+            playerMovement.RunPlayer(horizontalInput, verticalInput, currentSpeedPlayer);            
+        }
+
     }
 
     void FixedUpdate()
     {
-        if(playerMovement.PlayerCheckGround() && jumpInput)
+        if(playerMovement.PlayerCheckGround() && jumpInput && !DialogManager.dialogActive)
             playerMovement.JumpPlayer(jumpForcePlayer);
     }
 

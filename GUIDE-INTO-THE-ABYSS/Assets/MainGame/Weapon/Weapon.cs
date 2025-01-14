@@ -44,23 +44,26 @@ public abstract class Weapon : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Mouse0) && !Player.isRunning)
+        if(!DialogManager.dialogActive)
         {
-            if(audioSourceWeapon.clip != shootClip)
-                audioSourceWeapon.clip = shootClip;
-            
-            Shoot();    
-        }
+            if(Input.GetKeyDown(KeyCode.Mouse0) && !Player.isRunning)
+            {
+                if(audioSourceWeapon.clip != shootClip)
+                    audioSourceWeapon.clip = shootClip;
+                
+                Shoot();    
+            }
 
-        if(Input.GetKeyDown(KeyCode.R) && !Player.isRunning)
-        {
-            if(audioSourceWeapon.clip != reloadClip)
-                audioSourceWeapon.clip = reloadClip;
-            
-            Reload();
-        }
+            if(Input.GetKeyDown(KeyCode.R) && !Player.isRunning)
+            {
+                if(audioSourceWeapon.clip != reloadClip)
+                    audioSourceWeapon.clip = reloadClip;
+                
+                Reload();
+            }
 
-        animatorWeapon.SetBool("IsRunning", Player.isRunning);
+            animatorWeapon.SetBool("IsRunning", Player.isRunning);
+        }
     }
 
     protected virtual void Shoot()
