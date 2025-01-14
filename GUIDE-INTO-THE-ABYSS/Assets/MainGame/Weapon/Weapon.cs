@@ -26,10 +26,17 @@ public abstract class Weapon : MonoBehaviour
 
     // Components
     private Animator animatorWeapon;
+    private AudioSource audioSourceWeapon;
+
+    // Clips
+    [SerializeField] private AudioClip reloadClip;
+    [SerializeField] private AudioClip shootClip;
+    [SerializeField] private AudioClip noAmmoClip;
 
     void Start()
     {
         animatorWeapon = GetComponent<Animator>();
+        audioSourceWeapon = GetComponent<AudioSource>();
 
         cameraPlayer = Camera.main;
         screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
@@ -39,11 +46,17 @@ public abstract class Weapon : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Mouse0) && !Player.isRunning)
         {
+            if(audioSourceWeapon.clip != shootClip)
+                audioSourceWeapon.clip = shootClip;
+            
             Shoot();    
         }
 
         if(Input.GetKeyDown(KeyCode.R) && !Player.isRunning)
         {
+            if(audioSourceWeapon.clip != reloadClip)
+                audioSourceWeapon.clip = reloadClip;
+            
             Reload();
         }
 
@@ -54,8 +67,10 @@ public abstract class Weapon : MonoBehaviour
     {
         if(currentAmmoInMagazine > 0 && Time.time >= nextTimeToFire)
         {
+            audioSourceWeapon.Play();
             nextTimeToFire = Time.time + fireRate;
 
+            animatorWeapon.Play("Attack");
             muzzleFlash.Play();
             currentAmmoInMagazine--;
 
@@ -69,14 +84,19 @@ public abstract class Weapon : MonoBehaviour
         }
         else
         {
-            Debug.Log("Nema patroniv");
+            if(audioSourceWeapon.clip != noAmmoClip)
+                audioSourceWeapon.clip = noAmmoClip;
+            
+
+            audioSourceWeapon.Play();
         }
     }
 
     protected virtual void Reload()
     {
         if (currentAmmoInMagazine == ammoInMagazine || totalAmmo == 0) return;
-
+        
+        audioSourceWeapon.Play();
         animatorWeapon.Play("Reload");
 
         int ammoNeeded = ammoInMagazine - currentAmmoInMagazine;
