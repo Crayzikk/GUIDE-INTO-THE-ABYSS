@@ -16,7 +16,7 @@ public class DialogManager : MonoBehaviour
     [Header("Dialog Sentence")]
     [SerializeField] List<Dialog> dialogSentences;
 
-    private int currentIndexDialog;
+    private int currentIndexDialog = 0;
 
     void Start()
     {
@@ -31,10 +31,8 @@ public class DialogManager : MonoBehaviour
         }
     }
 
-    public void StartDialog(int indexStartDialog)
+    public void StartDialog()
     {
-        currentIndexDialog = indexStartDialog;
-
         dialogActive = true;
         ToggleDialogWindow(true);
         ShowNextSentence(); 
