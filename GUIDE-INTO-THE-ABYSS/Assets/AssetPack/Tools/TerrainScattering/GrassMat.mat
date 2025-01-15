@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: GrassMat
-  m_Shader: {fileID: -6465566751694194690, guid: 1bcb6d6f53bcbc4458356900dba664f4, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: e09eca150e696c747a6f481d53826b09, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -66,7 +66,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTexture:
-        m_Texture: {fileID: 2800000, guid: 2038a37a87e1eff4fa5efd69c9d1312e, type: 3}
+        m_Texture: {fileID: 2800000, guid: e3970f24555e12a46b75cdf5140ff23e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -94,7 +94,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _WindNoiseTexture:
-        m_Texture: {fileID: 2800000, guid: ecce1f46cfc93b340b84c24260e3e2fc, type: 3}
+        m_Texture: {fileID: 2800000, guid: ec15105ebd5e9eb48ac6658307c2f369, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -114,14 +114,14 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 1
     - _AlphaToMask: 1
-    - _AlphaTreshold: 0.5
+    - _AlphaTreshold: 0.197
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _ColorBlending: 19.7
-    - _ColorDistance: 27.73
+    - _ColorBlending: 6.9
+    - _ColorDistance: 3.62
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
@@ -164,13 +164,13 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0, g: 1, b: 0.17310214, a: 1}
-    - _BottomColor: {r: 0.30081883, g: 0.6132076, b: 0.17065683, a: 0}
+    - _BottomColor: {r: 1, g: 1, b: 1, a: 0}
     - _Color: {r: 0, g: 0.745283, b: 0.12859784, a: 1}
     - _ColorDistance: {r: 1.72, g: 17.55, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FarColor: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
+    - _FarColor: {r: 0, g: 0, b: 0, a: 1}
     - _GrassColor: {r: 0, g: 1, b: 0.002223969, a: 0}
-    - _NearColor: {r: 0, g: 1, b: 0.03938818, a: 0}
+    - _NearColor: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _WindHeightAffect: {r: 0.24, g: 0.5, b: 0, a: 0}
     - _WindNoiseContrast: {r: 0, g: 1, b: 0, a: 0}
