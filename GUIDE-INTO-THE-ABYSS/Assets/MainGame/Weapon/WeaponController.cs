@@ -5,20 +5,29 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private GameObject shortGun;
     [SerializeField] private GameObject revolver;
     
+    private Weapon weaponShortGun;
+    private Weapon weaponRevolver;
+
     void Start()
     {
+        weaponShortGun = GetComponentInChildren<Shortgun>();
+        weaponRevolver = GetComponentInChildren<Revoler>();
+
         ChangeWeapon(false, true);
     }
-
+    
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Alpha1) && shortGun.activeSelf)
+        if(!(weaponShortGun.weaponReloading || weaponRevolver.weaponReloading))
         {
-            ChangeWeapon(false, true);
-        }
-        else if(Input.GetKeyDown(KeyCode.Alpha2) && revolver.activeSelf)
-        {
-            ChangeWeapon(true, false);
+            if(Input.GetKeyDown(KeyCode.Alpha1) && shortGun.activeSelf)
+            {
+                ChangeWeapon(false, true);
+            }
+            else if(Input.GetKeyDown(KeyCode.Alpha2) && revolver.activeSelf)
+            {
+                ChangeWeapon(true, false);
+            }            
         }
     }
     

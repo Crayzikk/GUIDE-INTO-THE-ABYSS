@@ -6,5 +6,5 @@ public class Shortgun : Weapon
     public override int totalAmmo { get; set; } = 15;
     public override int currentAmmoInMagazine { get; set; } = 5;
     protected override int ammoInMagazine { get; set; } = 5;
-    protected override float fireRate { get; set; } = 0.5f;
+    protected override float fireRate { get; set; } = 0.6f;
 }

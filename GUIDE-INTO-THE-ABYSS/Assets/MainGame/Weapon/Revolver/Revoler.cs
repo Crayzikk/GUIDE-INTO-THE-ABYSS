@@ -5,5 +5,5 @@ public class Revoler : Weapon
     public override int totalAmmo { get; set; } = 36;
     public override int currentAmmoInMagazine { get; set; } = 6;
     protected override int ammoInMagazine { get; set; } = 6;
-    protected override float fireRate { get; set; } = 0.4f;
+    protected override float fireRate { get; set; } = 0.8f;
 }

@@ -33,6 +33,10 @@ public abstract class Weapon : MonoBehaviour
     [SerializeField] private AudioClip shootClip;
     [SerializeField] private AudioClip noAmmoClip;
 
+    public bool weaponReloading;
+
+    private bool ammoInZero;
+
     void Start()
     {
         animatorWeapon = GetComponent<Animator>();
@@ -44,9 +48,11 @@ public abstract class Weapon : MonoBehaviour
 
     void Update()
     {
+        ammoInZero = currentAmmoInMagazine <= 0;
+
         if(!DialogManager.dialogActive)
         {
-            if(Input.GetKeyDown(KeyCode.Mouse0) && !Player.isRunning)
+            if(Input.GetKey(KeyCode.Mouse0) && !Player.isRunning && !weaponReloading)
             {
                 if(audioSourceWeapon.clip != shootClip)
                     audioSourceWeapon.clip = shootClip;
@@ -54,12 +60,23 @@ public abstract class Weapon : MonoBehaviour
                 Shoot();    
             }
 
-            if(Input.GetKeyDown(KeyCode.R) && !Player.isRunning)
+            if(Input.GetKey(KeyCode.R) && !Player.isRunning && !weaponReloading)
             {
                 if(audioSourceWeapon.clip != reloadClip)
                     audioSourceWeapon.clip = reloadClip;
                 
                 Reload();
+            }
+
+            if(weaponReloading)
+            {
+                AnimatorStateInfo stateInfo = animatorWeapon.GetCurrentAnimatorStateInfo(0);
+
+                if(stateInfo.normalizedTime >= 0.9f)
+                {
+                    AmmoReload();
+                    weaponReloading = false;
+                }
             }
 
             animatorWeapon.SetBool("IsRunning", Player.isRunning);
@@ -85,7 +102,7 @@ public abstract class Weapon : MonoBehaviour
                 hit.collider.GetComponent<Health>()?.TakeDamage(damageWeapon);
             }            
         }
-        else
+        else if(ammoInZero)
         {
             if(audioSourceWeapon.clip != noAmmoClip)
                 audioSourceWeapon.clip = noAmmoClip;
@@ -102,6 +119,11 @@ public abstract class Weapon : MonoBehaviour
         audioSourceWeapon.Play();
         animatorWeapon.Play("Reload");
 
+        weaponReloading = true;
+    }
+
+    private void AmmoReload()
+    {
         int ammoNeeded = ammoInMagazine - currentAmmoInMagazine;
 
         if (totalAmmo >= ammoNeeded)

@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
 
     // Reference to components
     private PlayerMovement playerMovement;
+    private Animator playerAnimator;
 
     // Inputs
     private float horizontalInput;
@@ -31,9 +32,10 @@ public class Player : MonoBehaviour
     void Start()
     {
         currentSpeedPlayer = speedWalkPlayer;
-        playerHealthController = GetComponent<Health>();
 
+        playerHealthController = GetComponent<Health>();
         playerMovement = GetComponent<PlayerMovement>();
+        playerAnimator = GetComponent<Animator>();
     }
     
     void Update()
@@ -45,7 +47,8 @@ public class Player : MonoBehaviour
             float targetSpeed = runInput ? speedRunPlayer : speedWalkPlayer;
             currentSpeedPlayer = Mathf.Lerp(currentSpeedPlayer, targetSpeed, stepLerp * Time.deltaTime);
 
-            playerMovement.RunPlayer(horizontalInput, verticalInput, currentSpeedPlayer);            
+            playerMovement.RunPlayer(horizontalInput, verticalInput, currentSpeedPlayer); 
+            playerAnimator.SetBool("IsRunning", runInput);           
         }
 
     }
