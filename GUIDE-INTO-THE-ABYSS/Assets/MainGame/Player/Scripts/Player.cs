@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
 
     [Header("Health Settings")]
     [SerializeField] private int healthPlayer;
+    private Health playerHealthController;
 
     // Reference to components
     private PlayerMovement playerMovement;
@@ -22,15 +23,15 @@ public class Player : MonoBehaviour
 
     // Player State
     private float currentSpeedPlayer;
-    private int currentHealthPlayer;
 
     // Cheking
     public static bool isRunning;
+
     
     void Start()
     {
         currentSpeedPlayer = speedWalkPlayer;
-        currentHealthPlayer = healthPlayer;
+        playerHealthController = GetComponent<Health>();
 
         playerMovement = GetComponent<PlayerMovement>();
     }

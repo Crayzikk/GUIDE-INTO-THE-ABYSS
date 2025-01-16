@@ -7,14 +7,22 @@ public abstract class Enemy : MonoBehaviour
     [SerializeField] protected float speed; 
     [SerializeField] protected int damage; 
 
-    public virtual void TakeDamage(int damage)
-    {
-        health -= damage;
+    // Event
+    public delegate void EnemyDead(); 
+    public event EnemyDead OnEnemyDead;
 
-        if (health <= 0)
-        {
+    // Other
+    private Health healthEnemyController;
+
+    void Start()
+    {
+        healthEnemyController = GetComponent<Health>();
+    }
+
+    void Update()
+    {
+        if(healthEnemyController.healthInZero)
             Die();
-        }
     }
 
     public abstract void Attack();

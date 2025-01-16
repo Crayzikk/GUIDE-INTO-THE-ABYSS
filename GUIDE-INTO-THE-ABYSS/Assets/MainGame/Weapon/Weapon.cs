@@ -82,7 +82,7 @@ public abstract class Weapon : MonoBehaviour
             if(Physics.Raycast(ray, out hit, shootingRange, layerMask))
             {
                 Debug.Log(hit.collider.name);
-                hit.collider.GetComponent<Enemy>()?.TakeDamage(damageWeapon);
+                hit.collider.GetComponent<Health>()?.TakeDamage(damageWeapon);
             }            
         }
         else
