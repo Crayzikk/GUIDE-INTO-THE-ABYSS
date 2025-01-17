@@ -82,8 +82,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.8566356, y: 1.7676613, z: 0.5180435}
-  m_Center: {x: 0.071682215, y: 0.9116415, z: 0.07843876}
+  m_Size: {x: 1.0323558, y: 1.9245973, z: 0.7712431}
+  m_Center: {x: 0.057485342, y: 0.99010944, z: 0.12261772}
 --- !u!54 &1172946393016914392
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2063,6 +2063,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyStartAttack: 0
+  shootStartAttack: 0
 --- !u!1 &6859425721983435457
 GameObject:
   m_ObjectHideFlags: 0

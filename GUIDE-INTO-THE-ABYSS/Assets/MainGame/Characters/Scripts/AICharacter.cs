@@ -9,7 +9,8 @@ public abstract class AICharacter : MonoBehaviour
 
     // Components
     protected NavMeshAgent navMeshAgentCharacter;
-    private Animator animator;
+    protected Animator animatorAgent;
+    [SerializeField] Animator animatorAgentShortgun;
     
     // Other
     protected int indexTargetPoint;
@@ -19,42 +20,64 @@ public abstract class AICharacter : MonoBehaviour
 
     // Weapon
     [SerializeField] private Transform pointFire;
-    private float shootingRange = 50;
+    private float shootingRange = 100;
     private int damageAgent = 40;
 
     // Enemy Detected
     protected bool agentDetectedEnemy;
     protected Vector3 pointEnemy;
-    protected Enemy currentDetectedEnemy;
+    protected Vector3 currentDetectedEnemy;
 
     // Particle System
     [SerializeField] private ParticleSystem muzzleFlash;
+    [SerializeField] private ParticleSystem blood;
 
     // Time 
-    protected float fireRate = 0.7f;
+    protected float fireRate = 1.5f;
     protected float nextTimeToFire;
 
+    // Audio
+    [Header("Audio")]
+    [SerializeField] protected AudioSource audioSourceShortGun;
+    [SerializeField] protected AudioClip audioClipShoot;
+
+    public bool runNextPoint;
 
     void Start()
     {
+        animatorAgent = GetComponent<Animator>();
         navMeshAgentCharacter = GetComponent<NavMeshAgent>();
         indexTargetPoint = 0;
+
+        audioSourceShortGun.clip = audioClipShoot;
+
+        runNextPoint = true;
     }
 
     void Update()
     {
         if(HasDetectedEnemy())
         {
+            animatorAgentShortgun.SetBool("AgentShooting", true);
+            
+            animatorAgent.SetBool("IsShooting", true);
             navMeshAgentCharacter.velocity = Vector3.zero;
+
             AgentAttackEnemy();
         }
         else
         {
-            MoveToPoint(targetPoints[indexTargetPoint].position);
+            animatorAgentShortgun.SetBool("AgentShooting", false);
+
+            animatorAgent.SetBool("IsShooting", false);
+            animatorAgent.SetBool("IsRunning", runNextPoint);
+
+            if(runNextPoint)
+                MoveToPoint(targetPoints[indexTargetPoint].position);
 
             if(HasAgentReachedTarget())
             {
-                if(indexTargetPoint < targetPoints.Length)
+                if(indexTargetPoint < targetPoints.Length - 1)
                     indexTargetPoint++;
                 
                 MoveToPoint(targetPoints[indexTargetPoint].position);                
@@ -95,8 +118,8 @@ public abstract class AICharacter : MonoBehaviour
         {
             agentDetectedEnemy = true;
             currentDetectedEnemy = collidersEnemy.Length > 1 
-                ? collidersEnemy[Random.Range(0, collidersEnemy.Length - 1)].GetComponent<Enemy>()
-                : collidersEnemy[0].GetComponent<Enemy>();
+            ? collidersEnemy[Random.Range(0, collidersEnemy.Length - 1)].bounds.center
+            : collidersEnemy[0].bounds.center;
             
             return true;
         }
@@ -106,15 +129,14 @@ public abstract class AICharacter : MonoBehaviour
 
     private void AgentAttackEnemy()
     {
-        Vector3 enemyPosition = currentDetectedEnemy.gameObject.transform.position;
+        if (Vector3.Distance(transform.position, currentDetectedEnemy) <= radiusAttackEnemy)
+        {
+            Vector3 directionToEnemy = currentDetectedEnemy - transform.position;
 
-        if(Vector3.Distance(transform.position, enemyPosition) <= radiusAttackEnemy)
-        { 
-            Vector3 directionToEnemy = enemyPosition - transform.position; 
-            Quaternion rotation = Quaternion.LookRotation(directionToEnemy); 
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5f);
+            Quaternion rotation = Quaternion.LookRotation(directionToEnemy);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 8f);
 
-            if(Time.time >= nextTimeToFire)
+            if (Time.time >= nextTimeToFire)
             {
                 nextTimeToFire = Time.time + fireRate;
                 AgentShoot();
@@ -124,11 +146,19 @@ public abstract class AICharacter : MonoBehaviour
 
     private void AgentShoot()
     {
-        muzzleFlash.Play();
+        Vector3 directionToEnemy = currentDetectedEnemy - pointFire.position;
 
-        if (Physics.Raycast(pointFire.position, pointFire.forward, out agentHit, shootingRange))
+        // Debug.DrawRay(pointFire.position, directionToEnemy.normalized * shootingRange, Color.red, 2f);
+
+        if (Physics.Raycast(pointFire.position, directionToEnemy.normalized, out RaycastHit hit, shootingRange, LayerMask.GetMask("Enemy")))
         {
-            agentHit.collider.GetComponent<Health>()?.TakeDamage(damageAgent);       
+            muzzleFlash.Play();
+            audioSourceShortGun.Play();
+            
+            ParticleSystem particleSystem = Instantiate(blood, hit.point, Quaternion.identity);
+            Destroy(particleSystem, 3f);
+
+            hit.collider.GetComponent<Enemy>()?.EnemyTakeDamage(damageAgent);
         }
     }
 

@@ -49,78 +49,86 @@ public abstract class Enemy : MonoBehaviour
 
     protected void Update()
     {
-        healthEnemyController.DebugHealh();
-        TriggerEnemy();
-        
-        Move(currentTrigger.position);
-        enemyNavMeshAgent.isStopped = true;
-
-        if(!enemyAttack && !enemyHit)
-        {
-            enemyNavMeshAgent.isStopped = false;
-            Move(currentTrigger.position);
-        }
-
-        if(healthEnemyController.healthInZero)
-            Die();
-
-        AnimatorStateInfo stateInfo = animatorEnemy.GetCurrentAnimatorStateInfo(0);
-
-        if(enemyDie)
-        {
-            if(stateInfo.normalizedTime >= 0.9f)
-            {
-                Destroy(gameObject);
-            }
-        }
-        else if(enemyHit)
-        {
-            if(stateInfo.normalizedTime >= 0.9f)
-                enemyHit = false;
-        }
-        else
-        {
+        if(!healthEnemyController.healthInZero)
+        {    
+            healthEnemyController.DebugHealh();
+            TriggerEnemy();
+            
             if(currentTrigger != null)
+                Move(currentTrigger.position);
+            enemyNavMeshAgent.isStopped = true;
+
+            if(!enemyAttack && !enemyHit && currentTrigger != null)
             {
-                if(HasEnemyReachedTarget())
+                enemyNavMeshAgent.isStopped = false;
+                Move(currentTrigger.position);
+            }
+
+            AnimatorStateInfo stateInfo = animatorEnemy.GetCurrentAnimatorStateInfo(0);
+
+            if(enemyDie)
+            {
+                if(stateInfo.normalizedTime >= 0.9f)
                 {
-                    if(Time.time >= nextTimeToAttack)
+                    Destroy(gameObject);
+                }
+            }
+            else if(enemyHit)
+            {
+                if(stateInfo.normalizedTime >= 0.9f)
+                {
+                    enemyHit = false;
+                    enemyNavMeshAgent.isStopped = false;
+                }
+            }
+            else
+            {
+                if(currentTrigger != null)
+                {
+                    if(HasEnemyReachedTarget())
                     {
-                        nextTimeToAttack = Time.time + attackRate;
-                        Attack();
+                        if(Time.time >= nextTimeToAttack)
+                        {
+                            nextTimeToAttack = Time.time + attackRate;
+                            Attack();
+                        }
+                        else
+                        {
+                            if(stateInfo.IsName("attack1"))
+                            {
+                                animationTime = stateInfo.normalizedTime % 1 * stateInfo.length;
+                                
+                                if(animationTime >= targetTime && !eventTrigger)
+                                {
+                                    eventTrigger = true;
+                                    enemyAttackTriger.enemyStartAttack = true;
+                                }
+                            }
+
+                            if(stateInfo.normalizedTime >= 0.9f)
+                            {
+                                Vector3 directionToTarget = currentTrigger.position - transform.position;
+                                Quaternion rotation = Quaternion.LookRotation(directionToTarget);
+                                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5f);
+
+                                animatorEnemy.Play("idle");
+                                eventTrigger = false;
+                            }
+                        }
                     }
                     else
                     {
-                        if(stateInfo.IsName("attack1"))
-                        {
-                            animationTime = stateInfo.normalizedTime % 1 * stateInfo.length;
-                            
-                            if(animationTime >= targetTime && !eventTrigger)
-                            {
-                                eventTrigger = true;
-                                enemyAttackTriger.enemyStartAttack = true;
-                            }
-                        }
-
-                        if(stateInfo.normalizedTime >= 0.9f)
-                        {
-                            Vector3 directionToTarget = currentTrigger.position - transform.position;
-                            Quaternion rotation = Quaternion.LookRotation(directionToTarget);
-                            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5f);
-
-                            animatorEnemy.Play("idle");
-                            eventTrigger = false;
-                        }
+                        enemyAttack = false;
                     }
                 }
-                else
-                {
-                    enemyAttack = false;
-                }
             }
-        }
 
-        animatorEnemy.SetBool("IsRunning", !enemyAttack);
+            animatorEnemy.SetBool("IsRunning", !enemyAttack);
+        }
+        else
+        {
+            Die();
+        }
     }
 
     protected void Attack()
@@ -131,13 +139,15 @@ public abstract class Enemy : MonoBehaviour
 
     protected virtual void Die()
     {
+        gameObject.layer = 0;
         animatorEnemy.Play("death");
         enemyDie = true;
     }
     
     protected void Move(Vector3 point)
     {
-        enemyNavMeshAgent.SetDestination(point);
+        if(currentTrigger != null)
+            enemyNavMeshAgent.SetDestination(point);
     }
 
     protected void TriggerEnemy()
@@ -171,6 +181,8 @@ public abstract class Enemy : MonoBehaviour
     public void EnemyTakeDamage(int damage)
     {
         animatorEnemy.Play("hit_1");
+        enemyNavMeshAgent.isStopped = true;
+        enemyHit = true;
         healthEnemyController.TakeDamage(damage);
     }
 }

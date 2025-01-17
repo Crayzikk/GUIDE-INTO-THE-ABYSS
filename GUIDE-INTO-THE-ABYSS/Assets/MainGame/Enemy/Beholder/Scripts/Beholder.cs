@@ -15,8 +15,8 @@ public class Beholder : Enemy
     {
         enemyAttackTriger.shootStartAttack = true;
         base.Update();
-        
-        if(enemyAttack && Time.time >= nextTimeToShoot)
+    
+        if(enemyAttack && Time.time >= nextTimeToShoot && currentTrigger != null)
         {
             nextTimeToShoot = attackRate + Time.time;
             ShootProjectile();

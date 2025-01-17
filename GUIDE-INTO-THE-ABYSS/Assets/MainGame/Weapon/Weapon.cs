@@ -105,7 +105,8 @@ public abstract class Weapon : MonoBehaviour
                 if(enemyHit != null)
                 {
                     enemyHit.EnemyTakeDamage(damageWeapon);
-                    Instantiate(blood, hit.point, Quaternion.identity);
+                    ParticleSystem particleSystem = Instantiate(blood, hit.point, Quaternion.identity);
+                    Destroy(particleSystem, 3f);
                 }
             }            
         }
