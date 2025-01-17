@@ -36,10 +36,14 @@ public class Player : MonoBehaviour
         playerHealthController = GetComponent<Health>();
         playerMovement = GetComponent<PlayerMovement>();
         playerAnimator = GetComponent<Animator>();
+
+        playerHealthController.InitializeHealth(healthPlayer);
     }
     
     void Update()
     {
+        //playerHealthController.DebugHealh();
+
         if(!DialogManager.dialogActive)
         {
             GettingInputs();

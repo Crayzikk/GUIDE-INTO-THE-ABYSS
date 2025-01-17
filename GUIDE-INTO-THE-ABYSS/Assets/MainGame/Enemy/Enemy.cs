@@ -1,34 +1,176 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public abstract class Enemy : MonoBehaviour
 {
     // Enemy state
-    [SerializeField] protected int health; 
-    [SerializeField] protected float speed; 
-    [SerializeField] protected int damage; 
+    protected abstract int health { get; set; } 
+    protected abstract int damage { get; set; }
+    protected abstract float attackRate { get; set; }
+    private float nextTimeToAttack = 0f;
 
     // Event
     public delegate void EnemyDead(); 
     public event EnemyDead OnEnemyDead;
 
-    // Other
+    // Components
     private Health healthEnemyController;
+    private NavMeshAgent enemyNavMeshAgent;
+    private Animator animatorEnemy;
+    protected EnemyAttackTriger enemyAttackTriger;
 
-    void Start()
+    // Other
+    private float radiusTrigger = 30f;
+    protected Transform currentTrigger;
+
+    // Cheking
+    private bool enemyDie;
+    protected bool enemyAttack;
+    private bool enemyHit;
+
+    // Animation
+    private float animationTime;
+    private float targetTime = 0.10f;
+    private bool eventTrigger;
+
+    void Awake()
     {
         healthEnemyController = GetComponent<Health>();
+        enemyNavMeshAgent = GetComponent<NavMeshAgent>();
+        animatorEnemy = GetComponent<Animator>();
+        enemyAttackTriger = GetComponentInChildren<EnemyAttackTriger>();
+
+        enemyAttackTriger.SetDamageAttack(damage);
+        healthEnemyController.InitializeHealth(health);
+
+        enemyDie = false;
+        enemyAttack = false;
     }
 
-    void Update()
+    protected void Update()
     {
+        healthEnemyController.DebugHealh();
+        TriggerEnemy();
+        
+        Move(currentTrigger.position);
+        enemyNavMeshAgent.isStopped = true;
+
+        if(!enemyAttack && !enemyHit)
+        {
+            enemyNavMeshAgent.isStopped = false;
+            Move(currentTrigger.position);
+        }
+
         if(healthEnemyController.healthInZero)
             Die();
+
+        AnimatorStateInfo stateInfo = animatorEnemy.GetCurrentAnimatorStateInfo(0);
+
+        if(enemyDie)
+        {
+            if(stateInfo.normalizedTime >= 0.9f)
+            {
+                Destroy(gameObject);
+            }
+        }
+        else if(enemyHit)
+        {
+            if(stateInfo.normalizedTime >= 0.9f)
+                enemyHit = false;
+        }
+        else
+        {
+            if(currentTrigger != null)
+            {
+                if(HasEnemyReachedTarget())
+                {
+                    if(Time.time >= nextTimeToAttack)
+                    {
+                        nextTimeToAttack = Time.time + attackRate;
+                        Attack();
+                    }
+                    else
+                    {
+                        if(stateInfo.IsName("attack1"))
+                        {
+                            animationTime = stateInfo.normalizedTime % 1 * stateInfo.length;
+                            
+                            if(animationTime >= targetTime && !eventTrigger)
+                            {
+                                eventTrigger = true;
+                                enemyAttackTriger.enemyStartAttack = true;
+                            }
+                        }
+
+                        if(stateInfo.normalizedTime >= 0.9f)
+                        {
+                            Vector3 directionToTarget = currentTrigger.position - transform.position;
+                            Quaternion rotation = Quaternion.LookRotation(directionToTarget);
+                            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 5f);
+
+                            animatorEnemy.Play("idle");
+                            eventTrigger = false;
+                        }
+                    }
+                }
+                else
+                {
+                    enemyAttack = false;
+                }
+            }
+        }
+
+        animatorEnemy.SetBool("IsRunning", !enemyAttack);
     }
 
-    public abstract void Attack();
+    protected void Attack()
+    {
+        enemyAttack = true;
+        animatorEnemy.Play("attack1");
+    }
 
-    protected virtual void Die() 
-        => Destroy(gameObject);
+    protected virtual void Die()
+    {
+        animatorEnemy.Play("death");
+        enemyDie = true;
+    }
+    
+    protected void Move(Vector3 point)
+    {
+        enemyNavMeshAgent.SetDestination(point);
+    }
 
-    public abstract void Move();
+    protected void TriggerEnemy()
+    {
+        Collider[] collidersCharacter = Physics.OverlapSphere(transform.position, radiusTrigger, LayerMask.GetMask("Character"));
+
+        if(collidersCharacter.Length > 0)
+        {
+            currentTrigger = collidersCharacter[Random.Range(0, collidersCharacter.Length - 1)].GetComponent<Transform>();
+        }
+        else
+        {
+            currentTrigger = null;
+        }
+    }
+
+    protected bool HasEnemyReachedTarget()
+    {
+        if (enemyNavMeshAgent.remainingDistance <= enemyNavMeshAgent.stoppingDistance)
+        {
+            if (!enemyNavMeshAgent.hasPath || enemyNavMeshAgent.velocity.sqrMagnitude == 0f)
+            {
+                Debug.Log("Enemy досяг цілі!");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void EnemyTakeDamage(int damage)
+    {
+        animatorEnemy.Play("hit_1");
+        healthEnemyController.TakeDamage(damage);
+    }
 }

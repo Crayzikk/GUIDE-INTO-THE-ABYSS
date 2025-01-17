@@ -62,11 +62,11 @@ public abstract class AICharacter : MonoBehaviour
         }
     }
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red; // Встановлення кольору Gizmos
-        Gizmos.DrawWireSphere(transform.position, radiusHasDetectEnemy); // Малювання проволочної сфери
-    }
+    // void OnDrawGizmos()
+    // {
+    //     Gizmos.color = Color.red; // Встановлення кольору Gizmos
+    //     Gizmos.DrawWireSphere(transform.position, radiusHasDetectEnemy); // Малювання проволочної сфери
+    // }
 
     protected virtual void MoveToPoint(Vector3 point)
     {

@@ -23,6 +23,7 @@ public abstract class Weapon : MonoBehaviour
     
     // Particle System
     [SerializeField] private ParticleSystem muzzleFlash;
+    [SerializeField] private ParticleSystem blood;
 
     // Components
     private Animator animatorWeapon;
@@ -72,7 +73,7 @@ public abstract class Weapon : MonoBehaviour
             {
                 AnimatorStateInfo stateInfo = animatorWeapon.GetCurrentAnimatorStateInfo(0);
 
-                if(stateInfo.normalizedTime >= 0.9f)
+                if(stateInfo.normalizedTime >= 0.9f && stateInfo.IsName("Reload"))
                 {
                     AmmoReload();
                     weaponReloading = false;
@@ -99,7 +100,13 @@ public abstract class Weapon : MonoBehaviour
             if(Physics.Raycast(ray, out hit, shootingRange, layerMask))
             {
                 Debug.Log(hit.collider.name);
-                hit.collider.GetComponent<Health>()?.TakeDamage(damageWeapon);
+                Enemy enemyHit = hit.collider.GetComponent<Enemy>();
+
+                if(enemyHit != null)
+                {
+                    enemyHit.EnemyTakeDamage(damageWeapon);
+                    Instantiate(blood, hit.point, Quaternion.identity);
+                }
             }            
         }
         else if(ammoInZero)

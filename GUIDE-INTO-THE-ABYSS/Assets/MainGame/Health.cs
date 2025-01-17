@@ -35,4 +35,9 @@ public class Health : MonoBehaviour
         }
             
     }
+
+    public void DebugHealh()
+    {
+        Debug.Log(healthObject);
+    }
 }
