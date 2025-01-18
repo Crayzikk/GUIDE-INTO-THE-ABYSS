@@ -1,0 +1,11 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/MainGame/Menu/MenuStyles.uss?fileID=7433441132597879392&amp;guid=e5fb73e3fef006b45b0dfe7f73fa9ef1&amp;type=3#MenuStyles" />
+    <engine:VisualElement name="VisualElement" style="flex-grow: 1; align-items: center; width: 45%; height: 100%; align-self: flex-end; left: -234px; right: 0; background-color: rgba(9, 19, 1, 0.68); position: relative;">
+        <engine:VisualElement name="logo" style="flex-grow: 1; height: 758px; width: 324px; justify-content: space-evenly; align-items: center; background-color: rgba(195, 195, 195, 0); background-size: 142% 56%; background-image: url(&quot;project://database/Assets/MainGame/Menu/GAME-OVER.png?fileID=2800000&amp;guid=3c4e6e2fa0ed07445ae36767120d773e&amp;type=3#GAME-OVER&quot;); flex-direction: column-reverse; background-position-y: top 0;" />
+        <engine:VisualElement style="flex-grow: 1;">
+            <engine:Button text="Play" name="Play" class="menu-button" style="position: relative; top: -162px; height: 40px; width: 99px; background-size: 99% 100%;" />
+            <engine:Button text="Settings" name="settings" class="menu-button" style="position: relative; top: -135px; height: 40px; width: 99px;" />
+            <engine:Button text="Exit" name="exit" class="menu-button" style="position: relative; top: -113px; height: 40px; width: 99px;" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
