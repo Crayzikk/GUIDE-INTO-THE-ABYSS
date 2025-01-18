@@ -1,0 +1,14 @@
+.menu-button {
+    font-size: 22px;
+    color: rgb(96, 122, 93);
+    -unity-text-outline-color: rgb(170, 186, 112);
+    background-color: rgba(0, 0, 0, 0);
+    border-left-color: rgba(0, 0, 0, 0);
+    border-right-color: rgba(0, 0, 0, 0);
+    border-top-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+    -unity-font-style: bold;
+    width: 331px;
+    height: 770px;
+    -unity-text-outline-width: 1.2px;
+}
