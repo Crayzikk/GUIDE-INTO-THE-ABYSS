@@ -20,14 +20,13 @@ public class DialogManager : MonoBehaviour
 
     void Start()
     {
-        //ToggleDialogWindow(false);
+       // ToggleDialogWindow(false);
     }
 
     void Update()
     {
         if (dialogActive && Input.GetKeyDown(KeyCode.E))
         {
-            Debug.Log("Actiuve");
             ShowNextSentence();
         }
     }

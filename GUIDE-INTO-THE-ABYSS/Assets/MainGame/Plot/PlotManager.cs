@@ -1,26 +1,29 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlotManager : MonoBehaviour
 {
     [Header("Characters")]
     [SerializeField] private AICharacter aICharacterLeader;
     [SerializeField] private AICharacter aICharacterViktor;
-    //[SerializeField] private AICharacter aICharacterVlad;
+    [SerializeField] private AICharacter aICharacterVlad;
 
     [Header("Sounds")]
     [SerializeField] private AudioClip scream;
     [SerializeField] private AudioClip rustle;
+    [SerializeField] private AudioClip shoot;
 
     [Header("Other")]
     [SerializeField] private DialogManager dialogManager;
     [SerializeField] private GameObject rustleObject;
     [SerializeField] private GameObject prefabSpawner;
+    [SerializeField] private Image imageCamp;
 
     public static bool isPlayerInTrigger;
-    private bool eventMonsterStart;
+    public static bool eventStart;
     public static bool characterStop;
     private static int ivents = 0;
-
 
     private AudioSource audioSource;
 
@@ -28,7 +31,7 @@ public class PlotManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         rustleObject.SetActive(false);
-        dialogManager.StartDialog();
+        dialogManager.StartDialog(); 
     }
 
     void Update()
@@ -37,12 +40,18 @@ public class PlotManager : MonoBehaviour
 
         if(aICharacterLeader.indexTargetPoint == 3 && ivents == 0)
         {
+            characterStop = true;
             PlayerInForest();
             ivents++;
         }
         else if(aICharacterViktor.indexTargetPoint == 4 && ivents == 1)
         {
             PlayerHeardScream();
+            ivents++;
+        }
+        else if(eventStart && ivents == 2)
+        {
+            PlayerInCamp();
             ivents++;
         }
     }
@@ -60,16 +69,16 @@ public class PlotManager : MonoBehaviour
         audioSource.Play();
         rustleObject.SetActive(true);
         dialogManager.StartDialog();
-        Destroy(rustleObject, 0.2f);
 
         Invoke("ContinuePlayerHeardScream", 1f);
-        Invoke("PlayerKillAllMonster", 3f);
+        Invoke("PlayerKillAllMonster", 2f);
     }
 
     private void ContinuePlayerHeardScream()
     {
         Instantiate(prefabSpawner, aICharacterViktor.gameObject.transform.position, Quaternion.identity);
         aICharacterViktor.Die();
+        Invoke("PlayerKillAllMonster", 1f);
     }
 
     private void PlayerKillAllMonster()
@@ -79,6 +88,43 @@ public class PlotManager : MonoBehaviour
 
     private void PlayerInCamp()
     {
+        dialogManager.StartDialog();
+        Invoke("IncreaseTransparency", 5f);
+        Destroy(aICharacterLeader.gameObject);
+        Destroy(aICharacterVlad.gameObject);
+        audioSource.clip = shoot;
+        audioSource.Play();
+    }
 
+    public void IncreaseTransparency()
+    {
+        StartCoroutine(Fade(1f));  // Прозорість = 1 (повністю видимий)
+        Invoke("DecreaseTransparency", 2f);
+    }
+
+    // Функція для зменшення прозорості
+    public void DecreaseTransparency()
+    {
+        StartCoroutine(Fade(0f));  // Прозорість = 0 (повністю прозорий)
+        Invoke("IncreaseTransparency", 4f);
+        dialogManager.StartDialog();
+
+    }
+
+    // Корутина для анімації зміни прозорості
+    private IEnumerator Fade(float targetAlpha)
+    {
+        float currentAlpha = imageCamp.color.a;
+        float timeElapsed = 0f;
+
+        while (timeElapsed < 1f)
+        {
+            float newAlpha = Mathf.Lerp(currentAlpha, targetAlpha, timeElapsed / 1f);
+            imageCamp.color = new Color(imageCamp.color.r, imageCamp.color.g, imageCamp.color.b, newAlpha);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        imageCamp.color = new Color(imageCamp.color.r, imageCamp.color.g, imageCamp.color.b, targetAlpha);
     }
 }

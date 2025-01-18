@@ -58,10 +58,9 @@ public abstract class AICharacter : MonoBehaviour
 
     void Update()
     {
-        
         if(!characterDie)
         {
-            if(HasDetectedEnemy())
+            if(HasDetectedEnemy() && !PlotManager.characterStop)
             {
                 animatorAgentShortgun.SetBool("AgentShooting", true);
                 
@@ -84,22 +83,28 @@ public abstract class AICharacter : MonoBehaviour
                 if(HasAgentReachedTarget())
                 {
                     if(indexTargetPoint < targetPoints.Length - 1)
-                        indexTargetPoint++;
+                    {
+                       indexTargetPoint++; 
+                    }
+                    else
+                    {
+                        PlotManager.eventStart = true;
+                        runNextPoint = false;
+                    }    
                     
                     MoveToPoint(targetPoints[indexTargetPoint].position);                
                 }
             }
             else
             {
+                navMeshAgentCharacter.isStopped = true;
                 animatorAgent.SetBool("IsShooting", false);
                 animatorAgent.SetBool("IsRunning", false);
-                navMeshAgentCharacter.isStopped = true;
             }
         }
         else
         {
-            if(weaponAgent != null)
-                Destroy(weaponAgent);
+            Destroy(gameObject);
         }
     }
 
@@ -130,7 +135,7 @@ public abstract class AICharacter : MonoBehaviour
     
     protected virtual bool HasDetectedEnemy()
     {
-        Collider[] collidersEnemy = Physics.OverlapSphere(transform.position, radiusHasDetectEnemy, layerMaskEnemy);
+        Collider[] collidersEnemy = Physics.OverlapSphere(transform.position, radiusHasDetectEnemy, LayerMask.GetMask("Enemy"));
         return SetDetectedEnemy(collidersEnemy);
     }
 
@@ -171,11 +176,12 @@ public abstract class AICharacter : MonoBehaviour
         Vector3 directionToEnemy = currentDetectedEnemy - pointFire.position;
 
         // Debug.DrawRay(pointFire.position, directionToEnemy.normalized * shootingRange, Color.red, 2f);
-        muzzleFlash.Play();
-        audioSourceShortGun.Play();
-        
+
         if (Physics.Raycast(pointFire.position, directionToEnemy.normalized, out RaycastHit hit, shootingRange, LayerMask.GetMask("Enemy")))
-        {    
+        {
+            muzzleFlash.Play();
+            audioSourceShortGun.Play();
+            
             ParticleSystem particleSystem = Instantiate(blood, hit.point, Quaternion.identity);
             Destroy(particleSystem, 3f);
 
