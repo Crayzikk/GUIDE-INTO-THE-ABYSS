@@ -58,8 +58,7 @@ public abstract class AICharacter : MonoBehaviour
 
     void Update()
     {
-        runNextPoint = !PlotManager.characterStop;
-
+        
         if(!characterDie)
         {
             if(HasDetectedEnemy())
@@ -71,8 +70,9 @@ public abstract class AICharacter : MonoBehaviour
 
                 AgentAttackEnemy();
             }
-            else
+            else if(!PlotManager.characterStop)
             {
+                navMeshAgentCharacter.isStopped = false;
                 animatorAgentShortgun.SetBool("AgentShooting", false);
 
                 animatorAgent.SetBool("IsShooting", false);
@@ -88,6 +88,12 @@ public abstract class AICharacter : MonoBehaviour
                     
                     MoveToPoint(targetPoints[indexTargetPoint].position);                
                 }
+            }
+            else
+            {
+                animatorAgent.SetBool("IsShooting", false);
+                animatorAgent.SetBool("IsRunning", false);
+                navMeshAgentCharacter.isStopped = true;
             }
         }
         else
@@ -124,7 +130,7 @@ public abstract class AICharacter : MonoBehaviour
     
     protected virtual bool HasDetectedEnemy()
     {
-        Collider[] collidersEnemy = Physics.OverlapSphere(transform.position, radiusHasDetectEnemy, LayerMask.GetMask("Enemy"));
+        Collider[] collidersEnemy = Physics.OverlapSphere(transform.position, radiusHasDetectEnemy, layerMaskEnemy);
         return SetDetectedEnemy(collidersEnemy);
     }
 
@@ -165,12 +171,11 @@ public abstract class AICharacter : MonoBehaviour
         Vector3 directionToEnemy = currentDetectedEnemy - pointFire.position;
 
         // Debug.DrawRay(pointFire.position, directionToEnemy.normalized * shootingRange, Color.red, 2f);
-
+        muzzleFlash.Play();
+        audioSourceShortGun.Play();
+        
         if (Physics.Raycast(pointFire.position, directionToEnemy.normalized, out RaycastHit hit, shootingRange, LayerMask.GetMask("Enemy")))
-        {
-            muzzleFlash.Play();
-            audioSourceShortGun.Play();
-            
+        {    
             ParticleSystem particleSystem = Instantiate(blood, hit.point, Quaternion.identity);
             Destroy(particleSystem, 3f);
 

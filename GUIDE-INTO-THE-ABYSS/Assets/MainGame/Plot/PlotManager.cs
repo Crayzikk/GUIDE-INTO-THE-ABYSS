@@ -5,7 +5,7 @@ public class PlotManager : MonoBehaviour
     [Header("Characters")]
     [SerializeField] private AICharacter aICharacterLeader;
     [SerializeField] private AICharacter aICharacterViktor;
-    [SerializeField] private AICharacter aICharacterVlad;
+    //[SerializeField] private AICharacter aICharacterVlad;
 
     [Header("Sounds")]
     [SerializeField] private AudioClip scream;
@@ -13,19 +13,22 @@ public class PlotManager : MonoBehaviour
 
     [Header("Other")]
     [SerializeField] private DialogManager dialogManager;
+    [SerializeField] private GameObject rustleObject;
+    [SerializeField] private GameObject prefabSpawner;
 
     public static bool isPlayerInTrigger;
-    public static bool eventStart;
+    private bool eventMonsterStart;
     public static bool characterStop;
     private static int ivents = 0;
+
 
     private AudioSource audioSource;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-
-        dialogManager.StartDialog(); 
+        rustleObject.SetActive(false);
+        dialogManager.StartDialog();
     }
 
     void Update()
@@ -34,13 +37,13 @@ public class PlotManager : MonoBehaviour
 
         if(aICharacterLeader.indexTargetPoint == 3 && ivents == 0)
         {
-            characterStop = true;
             PlayerInForest();
             ivents++;
         }
-        else if(aICharacterViktor.indexTargetPoint == 3 && ivents == 1)
+        else if(aICharacterViktor.indexTargetPoint == 4 && ivents == 1)
         {
-            
+            PlayerHeardScream();
+            ivents++;
         }
     }
 
@@ -53,12 +56,25 @@ public class PlotManager : MonoBehaviour
 
     private void PlayerHeardScream()
     {
+        audioSource.clip = rustle;
+        audioSource.Play();
+        rustleObject.SetActive(true);
+        dialogManager.StartDialog();
+        Destroy(rustleObject, 0.2f);
 
+        Invoke("ContinuePlayerHeardScream", 1f);
+        Invoke("PlayerKillAllMonster", 3f);
+    }
+
+    private void ContinuePlayerHeardScream()
+    {
+        Instantiate(prefabSpawner, aICharacterViktor.gameObject.transform.position, Quaternion.identity);
+        aICharacterViktor.Die();
     }
 
     private void PlayerKillAllMonster()
     {
-
+        dialogManager.StartDialog();
     }
 
     private void PlayerInCamp()

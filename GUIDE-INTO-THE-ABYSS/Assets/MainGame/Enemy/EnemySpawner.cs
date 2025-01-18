@@ -12,9 +12,10 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float spawnInterval = 2f;  
     private bool spawnStart;
 
-    void Start()
+    void Awake()
     {
         timeToSpawn = Time.time + spawnInterval;
+        SpawnRandomEnemy();
     }
 
     void Update()

@@ -20,7 +20,7 @@ public abstract class Enemy : MonoBehaviour
     protected EnemyAttackTriger enemyAttackTriger;
 
     // Other
-    private float radiusTrigger = 30f;
+    private float radiusTrigger = 100f;
     protected Transform currentTrigger;
 
     // Cheking
@@ -54,7 +54,8 @@ public abstract class Enemy : MonoBehaviour
         if(!healthEnemyController.healthInZero)
         {   
             healthEnemyController.DebugHealh();
-            TriggerEnemy();
+            if(currentTrigger == null)
+                TriggerEnemy();
             
             if(currentTrigger != null)
                 Move(currentTrigger.position);

@@ -371,8 +371,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -14.791421, y: 1.9200001, z: 6.641063}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.36, y: 1.36, z: 1.36}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 9129938655910319483}
   - {fileID: 5774055537791601635}
@@ -436,7 +436,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ca269e774351bb40867590149da8b43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointAttack: {fileID: 9059939752233648107}
 --- !u!114 &3484686019367327632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,6 +450,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthInZero: 0
   healthInMax: 0
+  healthNotMax: 0
 --- !u!65 &7522175224104297978
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4275,6 +4275,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyStartAttack: 0
+  shootStartAttack: 0
 --- !u!1 &8132059464259051583
 GameObject:
   m_ObjectHideFlags: 0
