@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -12,11 +13,17 @@ public class Player : MonoBehaviour
     [SerializeField] private int healthPlayer;
     private Health playerHealthController;
     [SerializeField] private float timeToHeal = 0.3f; 
+
+    [Header("Sounds")]
+    [SerializeField] private AudioClip walkClip;
+    [SerializeField] private AudioClip runClip;
+
     private float healTimer;
 
     // Reference to components
     private PlayerMovement playerMovement;
     private Animator playerAnimator;
+    private AudioSource audioSource;
 
     // Inputs
     private float horizontalInput;
@@ -35,6 +42,7 @@ public class Player : MonoBehaviour
     {
         currentSpeedPlayer = speedWalkPlayer;
 
+        audioSource = GetComponent<AudioSource>();
         playerHealthController = GetComponent<Health>();
         playerMovement = GetComponent<PlayerMovement>();
         playerAnimator = GetComponent<Animator>();
@@ -45,6 +53,11 @@ public class Player : MonoBehaviour
     
     void Update()
     {
+        if(playerHealthController.healthInZero)
+        {
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            SceneManager.LoadScene(currentSceneName);
+        }
         //playerHealthController.DebugHealh();
 
         if(!DialogManager.dialogActive)
@@ -56,6 +69,17 @@ public class Player : MonoBehaviour
 
             playerMovement.RunPlayer(horizontalInput, verticalInput, currentSpeedPlayer); 
             playerAnimator.SetBool("IsRunning", runInput);
+
+            if(runInput)
+            {
+                audioSource.clip = runClip;
+                audioSource.Play();
+            }
+            else
+            {
+                audioSource.clip = walkClip;
+                audioSource.Play();           
+            }
 
             if (playerHealthController.healthNotMax)
             {

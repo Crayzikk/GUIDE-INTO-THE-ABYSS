@@ -33,8 +33,15 @@ public abstract class Enemy : MonoBehaviour
     private float targetTime = 0.10f;
     private bool eventTrigger;
 
+    [SerializeField] private AudioClip runClip;
+    [SerializeField] private AudioClip attackClip;
+    [SerializeField] private AudioClip takeDamageClip;
+
+    private AudioSource audioSource;
+
     void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
         healthEnemyController = GetComponent<Health>();
         enemyNavMeshAgent = GetComponent<NavMeshAgent>();
         animatorEnemy = GetComponent<Animator>();
@@ -67,8 +74,6 @@ public abstract class Enemy : MonoBehaviour
                 enemyNavMeshAgent.isStopped = false;
                 Move(currentTrigger.position);
             }
-
-            
 
             if(enemyHit)
             {
@@ -138,6 +143,8 @@ public abstract class Enemy : MonoBehaviour
 
     protected void Attack()
     {
+        audioSource.clip = attackClip;
+        audioSource.Play();
         enemyAttack = true;
         animatorEnemy.Play("attack1");
     }
@@ -152,7 +159,12 @@ public abstract class Enemy : MonoBehaviour
     protected void Move(Vector3 point)
     {
         if(currentTrigger != null)
+        {
             enemyNavMeshAgent.SetDestination(point);
+            audioSource.clip = runClip;
+            audioSource.Play();
+        }
+            
     }
 
     protected void TriggerEnemy()
@@ -185,6 +197,8 @@ public abstract class Enemy : MonoBehaviour
 
     public void EnemyTakeDamage(int damage)
     {
+        audioSource.clip = takeDamageClip;
+        audioSource.Play();
         animatorEnemy.Play("hit_1");
         enemyNavMeshAgent.isStopped = true;
         enemyHit = true;

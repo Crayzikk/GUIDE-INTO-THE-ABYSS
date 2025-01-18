@@ -20,6 +20,8 @@ public class PlotManager : MonoBehaviour
     [SerializeField] private GameObject prefabSpawner;
     [SerializeField] private Image imageCamp;
 
+    [SerializeField] private AudioClip music1;
+
     public static bool isPlayerInTrigger;
     public static bool eventStart;
     public static bool characterStop;
@@ -79,6 +81,9 @@ public class PlotManager : MonoBehaviour
         Instantiate(prefabSpawner, aICharacterViktor.gameObject.transform.position, Quaternion.identity);
         aICharacterViktor.Die();
         Invoke("PlayerKillAllMonster", 1f);
+        audioSource.clip = music1;
+        audioSource.loop = true;
+        audioSource.Play();
     }
 
     private void PlayerKillAllMonster()
