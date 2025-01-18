@@ -1552,6 +1552,7 @@ GameObject:
   m_Component:
   - component: {fileID: 876674171}
   - component: {fileID: 876674172}
+  - component: {fileID: 876674173}
   m_Layer: 0
   m_Name: UIMenu
   m_TagString: Untagged
@@ -1593,6 +1594,18 @@ MonoBehaviour:
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
   m_WorldSpaceHeight: 1080
+--- !u!114 &876674173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 876674170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 406f5320b8d4c364799e9217d65615f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &955968511
 GameObject:
   m_ObjectHideFlags: 0

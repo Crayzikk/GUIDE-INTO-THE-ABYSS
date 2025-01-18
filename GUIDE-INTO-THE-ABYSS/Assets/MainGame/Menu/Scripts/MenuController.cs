@@ -9,23 +9,25 @@ public class MenuController : MonoBehaviour
 
     private void OnEnable()
     {
-        // Отримуємо UI документ
         var root = GetComponent<UIDocument>().rootVisualElement;
-
-        // Зв'язуємо кнопки
+        
         playButton = root.Q<Button>("Play");
         settingsButton = root.Q<Button>("settings");
         exitButton = root.Q<Button>("exit");
 
-        // Прив'язуємо обробники подій
         playButton.clicked += OnPlayClicked;
         settingsButton.clicked += OnSettingsClicked;
         exitButton.clicked += OnExitClicked;
+
+        // Плануємо зміну UI після завершення поточного циклу макету
+        root.schedule.Execute(() => 
+        {
+            Debug.Log("UI elements are now ready for modification.");
+        }).ExecuteLater(10); // Виконується через кілька мілісекунд
     }
 
     private void OnDisable()
     {
-        // Відписуємо обробники подій
         playButton.clicked -= OnPlayClicked;
         settingsButton.clicked -= OnSettingsClicked;
         exitButton.clicked -= OnExitClicked;
