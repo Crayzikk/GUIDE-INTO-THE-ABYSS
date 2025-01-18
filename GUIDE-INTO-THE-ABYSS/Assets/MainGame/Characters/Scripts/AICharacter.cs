@@ -13,12 +13,13 @@ public abstract class AICharacter : MonoBehaviour
     [SerializeField] Animator animatorAgentShortgun;
     
     // Other
-    protected int indexTargetPoint;
+    public int indexTargetPoint;
     protected float radiusHasDetectEnemy = 10f;
     protected float radiusAttackEnemy = 10f;
     private RaycastHit agentHit;
 
     // Weapon
+    [SerializeField] private GameObject weaponAgent;
     [SerializeField] private Transform pointFire;
     private float shootingRange = 100;
     private int damageAgent = 40;
@@ -42,6 +43,7 @@ public abstract class AICharacter : MonoBehaviour
     [SerializeField] protected AudioClip audioClipShoot;
 
     public bool runNextPoint;
+    private bool characterDie;
 
     void Start()
     {
@@ -56,32 +58,42 @@ public abstract class AICharacter : MonoBehaviour
 
     void Update()
     {
-        if(HasDetectedEnemy())
-        {
-            animatorAgentShortgun.SetBool("AgentShooting", true);
-            
-            animatorAgent.SetBool("IsShooting", true);
-            navMeshAgentCharacter.velocity = Vector3.zero;
+        runNextPoint = !PlotManager.characterStop;
 
-            AgentAttackEnemy();
+        if(!characterDie)
+        {
+            if(HasDetectedEnemy())
+            {
+                animatorAgentShortgun.SetBool("AgentShooting", true);
+                
+                animatorAgent.SetBool("IsShooting", true);
+                navMeshAgentCharacter.velocity = Vector3.zero;
+
+                AgentAttackEnemy();
+            }
+            else
+            {
+                animatorAgentShortgun.SetBool("AgentShooting", false);
+
+                animatorAgent.SetBool("IsShooting", false);
+                animatorAgent.SetBool("IsRunning", runNextPoint);
+
+                if(runNextPoint)
+                    MoveToPoint(targetPoints[indexTargetPoint].position);
+
+                if(HasAgentReachedTarget())
+                {
+                    if(indexTargetPoint < targetPoints.Length - 1)
+                        indexTargetPoint++;
+                    
+                    MoveToPoint(targetPoints[indexTargetPoint].position);                
+                }
+            }
         }
         else
         {
-            animatorAgentShortgun.SetBool("AgentShooting", false);
-
-            animatorAgent.SetBool("IsShooting", false);
-            animatorAgent.SetBool("IsRunning", runNextPoint);
-
-            if(runNextPoint)
-                MoveToPoint(targetPoints[indexTargetPoint].position);
-
-            if(HasAgentReachedTarget())
-            {
-                if(indexTargetPoint < targetPoints.Length - 1)
-                    indexTargetPoint++;
-                
-                MoveToPoint(targetPoints[indexTargetPoint].position);                
-            }
+            if(weaponAgent != null)
+                Destroy(weaponAgent);
         }
     }
 
@@ -110,10 +122,14 @@ public abstract class AICharacter : MonoBehaviour
         return false;
     }
     
-    private bool HasDetectedEnemy()
+    protected virtual bool HasDetectedEnemy()
     {
         Collider[] collidersEnemy = Physics.OverlapSphere(transform.position, radiusHasDetectEnemy, LayerMask.GetMask("Enemy"));
+        return SetDetectedEnemy(collidersEnemy);
+    }
 
+    protected bool SetDetectedEnemy(Collider[] collidersEnemy)
+    {
         if(collidersEnemy.Length > 0)
         {
             agentDetectedEnemy = true;
@@ -160,6 +176,12 @@ public abstract class AICharacter : MonoBehaviour
 
             hit.collider.GetComponent<Enemy>()?.EnemyTakeDamage(damageAgent);
         }
+    }
+
+    public void Die()
+    {
+        characterDie = true;
+        animatorAgent.Play("Dying Backwards");
     }
 
 }

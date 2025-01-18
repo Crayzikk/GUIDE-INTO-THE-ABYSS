@@ -11,6 +11,8 @@ public class Player : MonoBehaviour
     [Header("Health Settings")]
     [SerializeField] private int healthPlayer;
     private Health playerHealthController;
+    [SerializeField] private float timeToHeal = 0.3f; 
+    private float healTimer;
 
     // Reference to components
     private PlayerMovement playerMovement;
@@ -38,6 +40,7 @@ public class Player : MonoBehaviour
         playerAnimator = GetComponent<Animator>();
 
         playerHealthController.InitializeHealth(healthPlayer);
+        healTimer = timeToHeal; 
     }
     
     void Update()
@@ -52,9 +55,19 @@ public class Player : MonoBehaviour
             currentSpeedPlayer = Mathf.Lerp(currentSpeedPlayer, targetSpeed, stepLerp * Time.deltaTime);
 
             playerMovement.RunPlayer(horizontalInput, verticalInput, currentSpeedPlayer); 
-            playerAnimator.SetBool("IsRunning", runInput);           
-        }
+            playerAnimator.SetBool("IsRunning", runInput);
 
+            if (playerHealthController.healthNotMax)
+            {
+                healTimer -= Time.deltaTime; 
+
+                if (healTimer <= 0)
+                {
+                    playerHealthController.Heal(1); 
+                    healTimer = timeToHeal; 
+                }
+            }
+        }
     }
 
     void FixedUpdate()

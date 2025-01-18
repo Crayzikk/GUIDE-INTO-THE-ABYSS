@@ -4,6 +4,7 @@ public class Health : MonoBehaviour
 {
     public bool healthInZero;
     public bool healthInMax;
+    public bool healthNotMax;
     
     private int healthObject;
     private int maxHealthObject;
@@ -19,6 +20,7 @@ public class Health : MonoBehaviour
     {
         healthObject -= damage;
         healthInMax = false;
+        healthNotMax = true;
 
         if(healthObject <= 0)
             healthInZero = true;
@@ -30,10 +32,16 @@ public class Health : MonoBehaviour
 
         if(healthObject > maxHealthObject)
         {
+            healthNotMax = false;
             healthInMax = true;
             healthObject = maxHealthObject; 
         }
             
+    }
+
+    public int GetCurrentHealth()
+    {
+        return healthObject;
     }
 
     public void DebugHealh()

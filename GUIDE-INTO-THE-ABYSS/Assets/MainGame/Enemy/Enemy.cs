@@ -10,8 +10,8 @@ public abstract class Enemy : MonoBehaviour
     private float nextTimeToAttack = 0f;
 
     // Event
-    public delegate void EnemyDead(); 
-    public event EnemyDead OnEnemyDead;
+    // public delegate void EnemyDead(); 
+    // public event EnemyDead OnEnemyDead;
 
     // Components
     private Health healthEnemyController;
@@ -49,8 +49,10 @@ public abstract class Enemy : MonoBehaviour
 
     protected void Update()
     {
+        AnimatorStateInfo stateInfo = animatorEnemy.GetCurrentAnimatorStateInfo(0);
+
         if(!healthEnemyController.healthInZero)
-        {    
+        {   
             healthEnemyController.DebugHealh();
             TriggerEnemy();
             
@@ -64,16 +66,9 @@ public abstract class Enemy : MonoBehaviour
                 Move(currentTrigger.position);
             }
 
-            AnimatorStateInfo stateInfo = animatorEnemy.GetCurrentAnimatorStateInfo(0);
+            
 
-            if(enemyDie)
-            {
-                if(stateInfo.normalizedTime >= 0.9f)
-                {
-                    Destroy(gameObject);
-                }
-            }
-            else if(enemyHit)
+            if(enemyHit)
             {
                 if(stateInfo.normalizedTime >= 0.9f)
                 {
@@ -127,7 +122,15 @@ public abstract class Enemy : MonoBehaviour
         }
         else
         {
-            Die();
+            if(enemyDie)
+            {
+                if(stateInfo.normalizedTime >= 0.9f)
+                    Destroy(gameObject);
+            }
+            else
+            {
+                Die();
+            }
         }
     }
 
